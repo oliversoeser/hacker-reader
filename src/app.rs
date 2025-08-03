@@ -4,20 +4,21 @@ use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 
 #[derive(Debug, Default)]
 pub struct App {
+    pub pos: u16,
     pub exit: bool,
 }
 
 impl App {
     pub fn new() -> App {
-        App { exit: false }
+        App { pos: 0, exit: false }
     }
 
     pub fn handle_events(&mut self) -> io::Result<()> {
         match event::read()? {
             Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
                 self.handle_key_event(key_event);
-            }
-            _ => {}
+            },
+            _ => {},
         }
 
         Ok(())
@@ -25,9 +26,21 @@ impl App {
 
     fn handle_key_event(&mut self, key_event: KeyEvent) {
         match key_event.code {
-            KeyCode::Char('q') => self.exit(),
-            _ => {}
+            KeyCode::Char('k') | KeyCode::Up => self.up(),
+            KeyCode::Char('j') | KeyCode::Down => self.down(),
+            KeyCode::Char('q') | KeyCode::Esc => self.exit(),
+            _ => {},
         }
+    }
+    
+    fn up(&mut self) {
+        if self.pos > 0 {
+            self.pos -= 1;
+        }
+    }
+
+    fn down(&mut self) {
+        self.pos += 1;
     }
 
     fn exit(&mut self) {
