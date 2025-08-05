@@ -5,12 +5,13 @@ use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 #[derive(Debug, Default)]
 pub struct App {
     pub pos: u16,
+    pub body: &'static str,
     pub exit: bool,
 }
 
 impl App {
     pub fn new() -> App {
-        App { pos: 0, exit: false }
+        App { pos: 0, body: "Hello World!".into(), exit: false }
     }
 
     pub fn handle_events(&mut self) -> io::Result<()> {
