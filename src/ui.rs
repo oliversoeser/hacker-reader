@@ -24,7 +24,13 @@ pub fn ui(frame: &mut Frame, app: &App) {
         .title_bottom(instructions)
         .border_set(border::THICK);
 
-    let paragraph = Paragraph::new(app.body)
+    let content = if let Ok(body) = app.body.lock() {
+        body.clone()
+    } else {
+        "Loading...".into()
+    };
+
+    let paragraph = Paragraph::new(content)
         .block(block)
         .wrap(Wrap { trim: true })
         .scroll((app.pos, 0));

@@ -20,9 +20,12 @@ async fn main() -> io::Result<()> {
 }
 
 fn run_app(terminal: &mut DefaultTerminal, app: &mut App) -> io::Result<()> {
+    app.start_fetch();
+
     while !app.exit {
         terminal.draw(|frame| ui(frame, app))?;
         app.handle_events()?;
     }
+
     Ok(())
 }
