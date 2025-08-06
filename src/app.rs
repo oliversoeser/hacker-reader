@@ -1,8 +1,11 @@
 use std::io;
 use std::sync::{Arc, Mutex};
 use std::u16::MAX;
+use std::time::Duration;
 
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
+
+use crate::scrape::extract_main_text;
 
 #[derive(Debug, Default)]
 pub struct App {
@@ -27,7 +30,7 @@ impl App {
             match fetch("https://news.ycombinator.com").await {
                 Ok(content) => {
                     if let Ok(mut body) = body_clone.lock() {
-                        *body = content;
+                        *body = extract_main_text(content);
                     }
                 },
                 Err(e) => {
@@ -40,11 +43,13 @@ impl App {
     }
 
     pub fn handle_events(&mut self) -> io::Result<()> {
-        match event::read()? {
-            Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
-                self.handle_key_event(key_event);
-            },
-            _ => {},
+        if event::poll(Duration::from_millis(100))? {
+            match event::read()? {
+                Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
+                    self.handle_key_event(key_event);
+                },
+                _ => {},
+            }
         }
 
         Ok(())

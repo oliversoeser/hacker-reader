@@ -5,6 +5,7 @@ use tokio;
 
 mod app;
 mod ui;
+mod scrape;
 use crate::{
     ui::ui,
     app::App,
